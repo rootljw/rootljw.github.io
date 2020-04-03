@@ -1,0 +1,78 @@
+# 经纬度数据格式转换遇到的问题
+
+需求:解析经纬度数据,转换成list
+
+在转换的过程中将文件中的经纬度数据读取出来后变成下文中arr的形式，在arr中纬度和经度存在一个字符串中，用逗号分隔，一个position(注：本文中position是指lat,lon组合)作为一个元素，现在需要将每个position拿出来，按逗号分割后转换成float，再将lat和lon合成小list形式的position，最后将每个小的position_list作为大的list的元素组成dataList。
+
+```python
+dataList=[]
+dataList1=[]
+dataList2=[]
+dataList3=[]
+dataList4=[]
+
+arr=['23.142469,113.177352', '23.14451,113.1827020', '23.147286,113.187509', '23.150995,113.191933']
+#需求:将arr转换成[[23.142469, 113.177352],[23.14451, 113.182702],[23.147286, 113.187509],[23.150995, 113.191933]]
+```
+
+第一种写法：使用比较装逼的‘列表推导式’
+
+```python
+'''列表推导式'''
+for i in range(len(arr)):
+    dataList.append([float(x) for x in arr[i].split(',')])
+dataList
+# 结果
+'''[[23.142469, 113.177352],
+ [23.14451, 113.182702],
+ [23.147286, 113.187509],
+ [23.150995, 113.191933]]'''
+```
+
+列表推导式主要由两部分构成：
+
+循环变量表达式（float(x) ）
+
+for循环头部（for x in arr[i].split(',')）
+
+可以看出append括号里的写法比较复杂,需要从中间往后来读: for x in arr[i].split(',')→float(x)→[]
+
+将其转换成普通for循环
+
+```python
+'''普通for方案1'''
+for i in range(len(arr)):
+    dataList2.append([])
+    for x in arr[i].split(','):
+        dataList2[-1].append(float(x))
+dataList2
+# 结果
+'''[[23.142469, 113.177352],
+ [23.14451, 113.182702],
+ [23.147286, 113.187509],
+ [23.150995, 113.191933]]'''
+```
+
+```python
+'''普通for方案2'''
+for i in range(len(arr)):
+    dataList3 = []
+    for x in arr[i].split(','):
+        dataList3.append(float(x))
+    dataList4.append(dataList3)
+dataList4
+# 结果
+'''[[23.142469, 113.177352],
+ [23.14451, 113.182702],
+ [23.147286, 113.187509],
+ [23.150995, 113.191933]]'''
+```
+
+
+
+两种方式的核心思路是生成position小list,第一种是插空列表再找到大list里这个空列表,再向空列表中插入position,外层循环负责遍历arr,内层循环负责切分并装入大list的小列表中.
+
+
+
+
+
